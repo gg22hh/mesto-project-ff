@@ -1,19 +1,26 @@
-const closePopupOnEscape = (e , popup) => {
+const closePopupOnEscape = (e) => {
   if (e.code === 'Escape') {
-    popup.classList.remove('popup_is-opened')
+    closePopup(document.querySelector('.popup_is-opened'))
   }
-}
+};
 
 const openPopup = (popup) => {
-  popup.classList.add('popup_is-opened')
-  document.addEventListener('keydown', (e) => closePopupOnEscape(e, popup))
-}
+  popup.classList.add('popup_is-opened');
+  document.addEventListener('keydown', closePopupOnEscape);
+};
 
-const closePopup = (e, popup) => {
-  if (e.target.className === 'popup__close' || e.target.classList[0] === 'popup') {
-    popup.classList.remove('popup_is-opened')
-    document.removeEventListener('click', closePopupOnEscape)
+const closePopup = (popup) => {
+  popup.classList.remove('popup_is-opened');
+  document.removeEventListener('click', closePopupOnEscape);
+};
+
+const closePopupByClick = (e) => {
+  if (
+    e.target.classList.contains('popup__close') ||
+    e.target.classList.contains('popup')
+  ) {
+    closePopup(e.currentTarget);
   }
-}
+};
 
-export {openPopup, closePopup}
+export { openPopup, closePopupByClick, closePopup };

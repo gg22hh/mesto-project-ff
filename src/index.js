@@ -1,7 +1,7 @@
 import './index.css'
 import { initialCards } from './components/cards';
 import {createCard, deleteCard, likeCard} from './components/card'
-import {openPopup, closePopup} from './components/modal' 
+import {openPopup, closePopupByClick, closePopup} from './components/modal' 
 
 const cardsList = document.querySelector('.places__list');
 const addButton = document.querySelector('.profile__add-button')
@@ -47,7 +47,7 @@ const handleEditFormSubmit = (e) => {
   e.preventDefault()
   profileTitle.textContent = nameInput.value
   profileJob.textContent = jobInput.value
-  popupEdit.classList.remove('popup_is-opened')
+  closePopup(document.querySelector('.popup_is-opened'))
 }
 
 const handleAddFormSubmit = (e) => {
@@ -57,19 +57,13 @@ const handleAddFormSubmit = (e) => {
   addForm.reset()
 }
 
-popupEdit.addEventListener('click', (e) => {
-  closePopup(e, popupEdit)
-})
+popupEdit.addEventListener('click', closePopupByClick)
 
 popupEdit.addEventListener('submit', handleEditFormSubmit)
 
-popupNewCard.addEventListener('click', (e) => {
-  closePopup(e, popupNewCard)
-})
+popupNewCard.addEventListener('click', closePopupByClick)
 
 popupNewCard.addEventListener('submit', handleAddFormSubmit)
 
-popupImage.addEventListener('click', (e) => {
-  closePopup(e, popupImage)
-})
+popupImage.addEventListener('click', closePopupByClick)
 

@@ -11,7 +11,7 @@ const createCard = (data, deleteFunction, likeCard, openImagePopup) => {
   const likeButton = card.querySelector('.card__like-button')
   const cardImage = card.querySelector('.card__image')
   cardImage.src = data.link;
-  cardImage.alt = 'Image';
+  cardImage.alt = data.name;
   card.querySelector('.card__title').textContent = data.name;
   card.querySelector('.card__delete-button').addEventListener('click', () => deleteFunction(card));
   cardImage.addEventListener('click', () => openImagePopup(cardImage, data.name))
