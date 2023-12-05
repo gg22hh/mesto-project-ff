@@ -47,13 +47,13 @@ const handleEditFormSubmit = (e) => {
   e.preventDefault()
   profileTitle.textContent = nameInput.value
   profileJob.textContent = jobInput.value
-  closePopup(document.querySelector('.popup_is-opened'))
+  closePopup(popupEdit)
 }
 
 const handleAddFormSubmit = (e) => {
   e.preventDefault()
   cardsList.prepend(createCard({name: place.value, link: link.value}, deleteCard, likeCard, openImagePopup))
-  popupNewCard.classList.remove('popup_is-opened')
+  closePopup(popupNewCard)
   addForm.reset()
 }
 
