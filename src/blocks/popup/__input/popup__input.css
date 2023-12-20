@@ -7,11 +7,30 @@
   line-height: 18px;
   box-sizing: border-box;
   padding: 10px 0 0;
+}
+
+.popup__input_type_error {
+  border-bottom: 1px solid #F00;
+}
+
+.input__container {
+  position: relative;
   margin-bottom: 10px;
 }
 
-.popup__input:last-of-type {
+.input__container:last-of-type {
   margin-bottom: 0;
+}
+
+.popup__error {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  color: #F00;
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+  z-index: 2;
 }
 
 @media screen and (max-width: 568px) {

@@ -1,3 +1,7 @@
+.popup_type_edit-profile-avatar .popup__content {
+  min-height: 272px;
+}
+
 .popup__content {
   max-width: 430px;
   width: 100%;
