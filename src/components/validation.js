@@ -1,39 +1,51 @@
-const hasInvalidInput = (inputList, validationConfig) => {
-  return inputList.some(inputElement => {
-    if (inputElement.classList.value.includes(validationConfig.linkClass)) {
-      return !inputElement.validity.valid
-    } else {
-      return (!inputElement.validity.valid || (/[^a-zа-яёЁ\s\-]/gi).test(inputElement.value))
-    }
-  })
+const hasInvalidInput = inputList => inputList.some(inputElement => !inputElement.validity.valid)
+
+const disableSubmitButton = (buttonElement, validationConfig) => {
+  buttonElement.disabled = false;
+  buttonElement.classList.remove(validationConfig.inactiveButtonClass);
 }
 
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
-  if (hasInvalidInput(inputList, validationConfig)) {
+  console.log(hasInvalidInput(inputList), 'ni ')
+  if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true
     buttonElement.classList.add(validationConfig.inactiveButtonClass)
   } else {
-    buttonElement.classList.remove(validationConfig.inactiveButtonClass)
-    buttonElement.disabled = false
+    disableSubmitButton(buttonElement, validationConfig)
   }
 }
+
+const showInputError = (inputElement, errorMessage, validationConfig, errorContainer) => {
+  errorContainer.textContent = errorMessage
+  inputElement.classList.add(validationConfig.inputErrorClass)
+}
+
+const hideInputError = (inputElement, validationConfig, errorContainer) => {
+  errorContainer.textContent = ''
+  inputElement.classList.remove(validationConfig.inputErrorClass)
+}
+
+const toggleInputValidity= (inputElement, validationConfig, errorContainer) => { 
+  if (inputElement.validity.patternMismatch) { 
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage); 
+  } else { 
+    inputElement.setCustomValidity(""); 
+  }
+  if (!inputElement.validity.valid) { 
+    showInputError(inputElement, inputElement.validationMessage, validationConfig, errorContainer); 
+  } else { 
+    hideInputError(inputElement, validationConfig, errorContainer); 
+  }
+}; 
 
 const addEventListener = (formElement, validationConfig) => {
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector))
 	const popupButton = formElement.querySelector(validationConfig.submitButtonSelector)
 	toggleButtonState(inputList, popupButton, validationConfig)
   inputList.forEach(input => {
-    input.addEventListener('input', (e) => {
+    input.addEventListener('input', () => {
       const errorContainer = formElement.querySelector(`.${input.id}-error`)
-      errorContainer.textContent = input.validationMessage
-      if (!input.classList.value.includes(validationConfig.linkClass)) {
-        if ((/[^a-zа-яёЁ\s\-]/gi).test(e.target.value)) {
-          errorContainer.textContent = input.dataset.errorMessage
-          input.classList.add(validationConfig.inputErrorClass)
-        } else {
-          input.classList.remove(validationConfig.inputErrorClass)
-        }
-      }
+      toggleInputValidity(input, validationConfig, errorContainer)
       toggleButtonState(inputList, popupButton, validationConfig)
     })
   })
@@ -53,7 +65,6 @@ export const clearValidation = (form, validationConfig) => {
     const errorContainer = form.querySelector(`.${input.id}-error`)
     errorContainer.textContent = ''
     input.classList.remove(validationConfig.inputErrorClass)
-		popupButton.disabled = false
-		popupButton.classList.remove(validationConfig.inactiveButtonClass)
+		disableSubmitButton(popupButton, validationConfig)
   })
 }

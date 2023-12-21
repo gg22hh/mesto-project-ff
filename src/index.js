@@ -1,9 +1,8 @@
 import './index.css'
-import { initialCards } from './components/cards';
 import {createCard} from './components/card'
 import {openPopup, closePopupByClick, closePopup} from './components/modal' 
 import { clearValidation, enableValidation } from './components/validation';
-import { deleteCard, fetchToAddCard, fetchToAvatarEdit, fetchToProfileEdit, getInitialCards, getUserInfo, likeCard } from './components/api';
+import { addCard, editAvatar, editProfile, getInitialCards, getUserInfo } from './components/api';
 
 const cardsList = document.querySelector('.places__list');
 const addButton = document.querySelector('.profile__add-button')
@@ -41,31 +40,7 @@ const validationConfig = {
   linkClass: 'popup__input_type_url'
 }
 
-// const getUserInfo = () => {
-//   return fetch('https://nomoreparties.co/v1/cohort-magistr-2/users/me', {
-//     headers: {
-//       authorization: '8914c2f0-088a-4d42-a690-f4fee1444b54'
-//     }
-//   })
-//   .then((res) => {
-//     if (res.ok) {
-//       return res.json()
-//     }
-//   })
-// }
-
-// const getInitialCards = () => {
-//   return fetch('https://nomoreparties.co/v1/cohort-magistr-2/cards', {
-//     headers: {
-//       authorization: '8914c2f0-088a-4d42-a690-f4fee1444b54'
-//     }
-//   })
-//   .then(res => {
-//     if (res.ok) {
-//       return res.json()
-//     }
-//   })
-// }
+enableValidation(validationConfig)
 
 Promise.all([getUserInfo(), getInitialCards()])
         .then(data => {
@@ -73,7 +48,7 @@ Promise.all([getUserInfo(), getInitialCards()])
           profileDescription.textContent = data[0].about
           profileImage.style.backgroundImage = `url(${data[0].avatar})`
           data[1].forEach((initialCard) => {
-            const cardToRender = createCard(initialCard, deleteCard, likeCard, openImagePopup, data[0]._id);
+            const cardToRender = createCard(initialCard, openImagePopup, data[0]._id);
             cardsList.append(cardToRender);
           });
         })
@@ -89,41 +64,61 @@ const openImagePopup = (cardImage, caption) => {
 
 addButton.addEventListener('click', () => {
   openPopup(popupNewCard)
-  enableValidation(validationConfig)
 })
 
 editProfileButton.addEventListener('click', () => {
   openPopup(popupEdit)
   nameInput.value = profileTitle.textContent 
   jobInput.value = profileJob.textContent
-  enableValidation(validationConfig)
 })
 
 profileImage.addEventListener('click', () => {
   openPopup(popupEditAvatar)
-  enableValidation(validationConfig)
 })
 
 const handleEditAvatarSubmit = (e) => {
   e.preventDefault()
-  fetchToAvatarEdit(popupEditAvatar, editLink.value, profileImage)
+  const popupButton = popupEditAvatar.querySelector('.popup__button')
+  popupButton.textContent = 'Сохранение...'
+  editAvatar(editLink.value).then(data => {
+    profileImage.style.backgroundImage = `url(${data.avatar})`
+    closePopup(popupEditAvatar)
+  })
+	.catch(err => console.log(err))
+  .finally(() => {
+    popupButton.textContent = 'Сохранение'
+  })
 }
 
 const handleEditFormSubmit = (e) => {
   e.preventDefault()
-  fetchToProfileEdit(popupEdit, nameInput.value, jobInput.value)
-  profileTitle.textContent = nameInput.value
-  profileJob.textContent = jobInput.value
+  const popupButton = popupEdit.querySelector('.popup__button')
+  popupButton.textContent = 'Сохранение...'
+  editProfile(popupEdit, nameInput.value, jobInput.value).then(data => {
+    profileTitle.textContent = data.name
+    profileJob.textContent = data.about
+    closePopup(popupEdit)
+  })
+  .catch(err => console.log(err))
+  .finally(() => popupButton.textContent = 'Сохранение')
 }
 
 const handleAddFormSubmit = (e) => {
   e.preventDefault()
-  fetchToAddCard(popupNewCard, place.value, link.value, addForm, cardsList, openImagePopup,)
+  const popupButton = popupNewCard.querySelector('.popup__button')
+  popupButton.textContent = 'Сохранение...'
+  addCard(place.value, link.value).then(data => {
+    cardsList.prepend(createCard(data, openImagePopup, data.owner._id))
+    closePopup(popupNewCard)
+    form.reset()
+  })
+	.catch(err => console.log(err))
+  .finally(() => popupButton.textContent = 'Сохранение')
 }
 
 popupEdit.addEventListener('click', (e) => {
   closePopupByClick(e)
-  clearValidation(popupEdit, validationConfig)
+  clearValidation(editForm, validationConfig)
 })
 
 popupEdit.addEventListener('submit', handleEditFormSubmit)
