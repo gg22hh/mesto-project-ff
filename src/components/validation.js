@@ -6,7 +6,6 @@ const disableSubmitButton = (buttonElement, validationConfig) => {
 }
 
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
-  console.log(hasInvalidInput(inputList), 'ni ')
   if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true
     buttonElement.classList.add(validationConfig.inactiveButtonClass)

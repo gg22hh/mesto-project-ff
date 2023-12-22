@@ -10,8 +10,7 @@ const handleResponse = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`);
 }
 
-const deleteCard = (card, data) => {
-  card.remove()
+const deleteCard = (data) => {
   return fetch(`${config.baseUrl}/cards/${data._id}`, {
     method: 'DELETE',
     headers: {

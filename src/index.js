@@ -1,5 +1,5 @@
 import './index.css'
-import {createCard} from './components/card'
+import {createCard, deleteCardMethod, likeCardMethod} from './components/card'
 import {openPopup, closePopupByClick, closePopup} from './components/modal' 
 import { clearValidation, enableValidation } from './components/validation';
 import { addCard, editAvatar, editProfile, getInitialCards, getUserInfo } from './components/api';
@@ -48,7 +48,7 @@ Promise.all([getUserInfo(), getInitialCards()])
           profileDescription.textContent = data[0].about
           profileImage.style.backgroundImage = `url(${data[0].avatar})`
           data[1].forEach((initialCard) => {
-            const cardToRender = createCard(initialCard, openImagePopup, data[0]._id);
+            const cardToRender = createCard(initialCard, openImagePopup, data[0]._id, likeCardMethod, deleteCardMethod);
             cardsList.append(cardToRender);
           });
         })
@@ -67,6 +67,7 @@ addButton.addEventListener('click', () => {
 })
 
 editProfileButton.addEventListener('click', () => {
+  clearValidation(editForm, validationConfig)
   openPopup(popupEdit)
   nameInput.value = profileTitle.textContent 
   jobInput.value = profileJob.textContent
@@ -108,7 +109,7 @@ const handleAddFormSubmit = (e) => {
   const popupButton = popupNewCard.querySelector('.popup__button')
   popupButton.textContent = 'Сохранение...'
   addCard(place.value, link.value).then(data => {
-    cardsList.prepend(createCard(data, openImagePopup, data.owner._id))
+    cardsList.prepend(createCard(data, openImagePopup, data.owner._id, likeCardMethod, deleteCardMethod))
     closePopup(popupNewCard)
     form.reset()
   })
@@ -118,7 +119,6 @@ const handleAddFormSubmit = (e) => {
 
 popupEdit.addEventListener('click', (e) => {
   closePopupByClick(e)
-  clearValidation(editForm, validationConfig)
 })
 
 popupEdit.addEventListener('submit', handleEditFormSubmit)
